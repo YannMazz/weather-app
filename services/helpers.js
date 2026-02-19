@@ -3,24 +3,54 @@ import {
   kmToMiles,
   mpsToMph,
   timeTo12HourFormat,
+  mToKm,
+  ftToMiles
 } from "./converters";
 
 export const getWindSpeed = (unitSystem, windInMps) =>
   unitSystem == "metric" ? windInMps : mpsToMph(windInMps);
 
-export const getVisibility = (unitSystem, visibilityInMeters) =>
-  unitSystem == "metric"
-    ? (visibilityInMeters / 1000).toFixed(1)
-    : kmToMiles(visibilityInMeters / 1000);
+export const getVisibility = (unitSystem, visibility) => {
+  let convertedVisibility = "";
+  if(visibility > 1000){
+    if(unitSystem === "metric"){
+      convertedVisibility = mToKm(visibility);
+    } else {
+      convertedVisibility = ftToMiles(visibility);
+    }
+  } else {
+    convertedVisibility = visibility;
+  }
+  console.log(unitSystem);
+  console.log(visibility);
+  console.log(convertedVisibility);
+  return convertedVisibility;
+}
 
-export const getTime = (unitSystem, currentTime, timezone) =>
+export const getVisibilityUnit = (unitSystem, visibility, visibilityUnit) => {
+  let unit = "";
+  if(visibility > 1000){
+    if(unitSystem === "metric"){
+      unit = "km";
+    } else {
+      unit = "mi";
+    }
+  } else {
+    unit = visibilityUnit;
+  }
+  console.log(unitSystem);
+  console.log(unit);
+  return unit;
+}
+  
+export const getTime = (unitSystem, currentTime) =>
   unitSystem == "metric"
-    ? unixToLocalTime(currentTime, timezone)
-    : timeTo12HourFormat(unixToLocalTime(currentTime, timezone));
+    ? unixToLocalTime(currentTime)
+    : timeTo12HourFormat(unixToLocalTime(currentTime));
 
-export const getAMPM = (unitSystem, currentTime, timezone) =>
+export const getAMPM = (unitSystem, currentTime) =>
   unitSystem === "imperial"
-    ? unixToLocalTime(currentTime, timezone).split(":")[0] >= 12
+    ? unixToLocalTime(currentTime).split(":")[0] >= 12
       ? "PM"
       : "AM"
     : "";
@@ -36,6 +66,6 @@ export const getWeekDay = (weatherData) => {
     "Saturday",
   ];
   return weekday[
-    new Date((weatherData.dt + weatherData.timezone) * 1000).getUTCDay()
+    new Date(weatherData.current.time).getUTCDay()
   ];
 };
