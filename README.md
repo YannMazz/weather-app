@@ -24,7 +24,7 @@ Check the current weather on a specific location
 
 3. `npm install`
 
-4. use the config.json file to specified your data 
+4. use the config.json file to specify your data 
 
 5. `npm run dev`
 
